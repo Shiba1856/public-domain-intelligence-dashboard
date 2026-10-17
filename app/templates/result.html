@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% block title %}{{ record.domain }} - Investigation #{{ record.id }}{% endblock %}
+{% block content %}
+{% from "_macros.html" import badge, source_line, raw %}
+{% set r = record.results %}
+
+<section class="result-head">
+  <div>
+    <h1>{{ record.domain }}</h1>
+    <p class="muted">Investigation #{{ record.id }} &middot; <strong>Last checked:</strong> {{ r.checked_at }}</p>
+  </div>
+  <div class="actions">
+    <a class="btn" href="{{ url_for('main.download_report', inv_id=record.id) }}">Download PDF report</a>
+    <a class="btn btn-secondary" href="{{ url_for('main.index') }}">New investigation</a>
+  </div>
+</section>
+
+<section class="summary-grid" aria-label="Investigation summary">
+  {% for s in record.summary.sections %}
+  <div class="card">
+    <div class="card-title">{{ s.name }} {{ badge(s.status) }}</div>
+    <p>{{ s.text }}</p>
+  </div>
+  {% endfor %}
+</section>
+
+<div data-tabs>
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" data-tab="dns">DNS</button>
+    <button type="button" role="tab" data-tab="rdap">RDAP</button>
+    <button type="button" role="tab" data-tab="ct">Certificate Transparency</button>
+    <button type="button" role="tab" data-tab="website">Website metadata</button>
+  </div>
+
+  <!-- DNS -->
+  <section class="panel card" data-panel="dns">
+    <h2>DNS records {{ badge(r.dns.status) }}</h2>
+    {{ source_line(r.dns) }}
+    <p class="muted small">Resolver(s) used: {{ r.dns.data.resolvers|join(", ") }}.
+      Shared IP addresses or name servers do not show common ownership.</p>
+    {% for entry in r.dns.data.types %}
+      <h3>{{ entry.type }} {{ badge(entry.status) }}
+        <span class="muted small">{{ entry.query_ms }} ms &middot; {{ entry.retrieved_at }}</span></h3>
+      {% if entry.records %}
+      <div class="table-wrap"><table>
+        <thead><tr><th>Value</th><th>Detail</th></tr></thead>
+        <tbody>{% for rec in entry.records %}<tr><td class="break">{{ rec.value }}</td><td>{{ rec.detail }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+      {% endif %}
+      {% if entry.message %}<p class="msg">{{ entry.message }}</p>{% endif %}
+    {% endfor %}
+    {{ raw(r.dns) }}
+  </section>
+
+  <!-- RDAP -->
+  <section class="panel card" data-panel="rdap">
+    <h2>RDAP registration information {{ badge(r.rdap.status) }}</h2>
+    {{ source_line(r.rdap) }}
+    {% if r.rdap.status == "available" %}
+    {% set d = r.rdap.data %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Registrar</td><td>{{ d.registrar or "Not provided" }}</td></tr>
+        <tr><td>Registered</td><td>{{ d.registered or "Not provided" }}</td></tr>
+        <tr><td>Expires</td><td>{{ d.expires or "Not provided" }}{% if d.expired %} <span class="badge badge-unavailable">Date has passed</span>{% endif %}</td></tr>
+        <tr><td>Last changed</td><td>{{ d.last_changed or "Not provided" }}</td></tr>
+        <tr><td>RDAP database updated</td><td>{{ d.rdap_db_updated or "Not provided" }}</td></tr>
+        <tr><td>Status</td><td>{{ d.status|join(", ") or "Not provided" }}</td></tr>
+        <tr><td>Name servers</td><td class="break">{{ d.nameservers|join(", ") or "Not provided" }}</td></tr>
+      </tbody>
+    </table></div>
+    {% endif %}
+    <p class="muted small">Registrant contact details are never requested or stored. Privacy
+      redaction is normal and is respected.</p>
+    {{ raw(r.rdap) }}
+  </section>
+
+  <!-- Certificate Transparency -->
+  <section class="panel card" data-panel="ct">
+    <h2>Certificate Transparency {{ badge(r.ct.status) }}</h2>
+    {{ source_line(r.ct) }}
+    <p class="muted small">Certificate <strong>issuance history</strong> only. It is not proof of
+      current ownership or of a currently running service.</p>
+    {% if r.ct.status == "available" %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Cert ID</th><th>Names</th><th>Issuer</th><th>Valid from</th><th>Valid to</th></tr></thead>
+      <tbody>
+      {% for e in r.ct.data.entries %}
+        <tr>
+          <td><a href="{{ e.link }}" target="_blank" rel="noopener noreferrer">{{ e.id }}</a></td>
+          <td class="break">{{ e.names|join(", ") }}{% if e.names_total > e.names|length %} (+{{ e.names_total - e.names|length }} more){% endif %}</td>
+          <td class="break">{{ e.issuer }}</td>
+          <td>{{ e.not_before }}</td>
+          <td>{{ e.not_after }}{% if e.expired %} <span class="badge badge-unavailable">Expired</span>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    <p class="muted small">Showing {{ r.ct.data.shown }} of {{ r.ct.data.total }} certificate records.</p>
+    {% endif %}
+    {{ raw(r.ct) }}
+  </section>
+
+  <!-- Website -->
+  <section class="panel card" data-panel="website">
+    <h2>Website metadata {{ badge(r.website.status) }}</h2>
+    {{ source_line(r.website) }}
+    {% if r.website.status == "available" %}
+    {% set d = r.website.data %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>HTTP status</td><td>{{ d.http_status }}</td></tr>
+        <tr><td>Final URL</td><td class="break">{{ d.final_url }}</td></tr>
+        <tr><td>Redirects followed</td><td>{{ d.redirects|length }}</td></tr>
+        <tr><td>Page title</td><td>{{ d.title or "Not found" }}</td></tr>
+        <tr><td>Meta description</td><td>{{ d.meta_description or "Not found" }}</td></tr>
+        <tr><td>Content type</td><td>{{ d.content_type or "Not provided" }}</td></tr>
+        <tr><td>robots.txt</td><td>
+          {% if d.robots.reachable == true %}Publicly reachable (HTTP 200)
+          {% elif d.robots.reachable == false %}Not reachable{% else %}Unknown{% endif %}
+          {% if d.robots.note %}- {{ d.robots.note }}{% endif %}</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Selected public response headers</h3>
+    {% if d.headers %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Header</th><th>Value</th></tr></thead>
+      <tbody>{% for name, value in d.headers.items() %}<tr><td>{{ name }}</td><td class="break">{{ value }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% else %}<p class="muted">None of the allow-listed headers were present.</p>{% endif %}
+    {% endif %}
+    <p class="muted small">Basic metadata collection from one request. This is not a security scan.</p>
+    {{ raw(r.website) }}
+  </section>
+</div>
+{% endblock %}

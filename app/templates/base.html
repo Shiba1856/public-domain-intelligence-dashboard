@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Public Domain Intelligence Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="{{ url_for('main.index') }}">Public Domain Intelligence Dashboard</a>
+      <span class="tag">Educational &amp; defensive research</span>
+    </div>
+  </header>
+  <div class="notice" role="note">
+    <div class="wrap">
+      <strong>Please note:</strong> findings come from public sources and may be incomplete or
+      outdated. Technical records are not proof of ownership, identity, intent or vulnerability.
+      This tool is not a security scanner.
+    </div>
+  </div>
+  <main class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="wrap site-footer">
+    Uses only public DNS, RDAP, Certificate Transparency and basic website information.
+  </footer>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

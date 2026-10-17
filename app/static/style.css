@@ -1,0 +1,61 @@
+:root {
+  --bg: #f4f6fb; --card: #ffffff; --text: #1d2433; --muted: #5b6478;
+  --primary: #2455d6; --border: #dde2ee; --danger: #b3261e;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+       background: var(--bg); color: var(--text); line-height: 1.5; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+main.wrap { padding-top: 20px; padding-bottom: 32px; }
+.site-header { background: #14213d; color: #fff; padding: 14px 0; }
+.site-header .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center; }
+.brand { color: #fff; font-weight: 700; font-size: 1.15rem; text-decoration: none; }
+.tag { font-size: .85rem; opacity: .8; }
+.notice { background: #fff4d6; border-bottom: 1px solid #ecd9a0; font-size: .9rem; padding: 8px 0; }
+.site-footer { color: var(--muted); font-size: .85rem; padding-bottom: 24px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+        padding: 18px; margin-bottom: 18px; }
+h1 { font-size: 1.6rem; margin: 0 0 8px; }
+h2 { font-size: 1.25rem; margin: 0 0 8px; }
+h3 { font-size: 1rem; margin: 18px 0 6px; }
+.muted { color: var(--muted); } .small { font-size: .85rem; }
+code { background: #eef1f8; padding: 1px 5px; border-radius: 4px; }
+a { color: var(--primary); }
+.form-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+input[type=text] { flex: 1 1 260px; padding: 10px 12px; font-size: 1rem;
+                   border: 1px solid #b9c1d6; border-radius: 8px; }
+.btn { display: inline-block; background: var(--primary); color: #fff; border: 0; padding: 10px 16px;
+       border-radius: 8px; font-size: .95rem; cursor: pointer; text-decoration: none; }
+.btn:disabled { opacity: .6; cursor: wait; }
+.btn-secondary { background: #e4e9f5; color: #1d2433; }
+.btn-danger { background: var(--danger); }
+.error { color: var(--danger); font-weight: 600; }
+.msg { background: #f1f4fb; border-left: 3px solid var(--primary); padding: 6px 10px; margin: 8px 0; font-size: .9rem; }
+.source { color: var(--muted); font-size: .85rem; margin: 4px 0; word-break: break-word; }
+.clear-form { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.check { font-size: .9rem; }
+.result-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px; }
+.summary-grid .card { margin: 0; }
+.card-title { font-weight: 700; margin-bottom: 6px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: #eef2fa; }
+td.break { word-break: break-word; overflow-wrap: anywhere; }
+.badge { display: inline-block; font-size: .75rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+.badge-available { background: #dff3e7; color: #17653d; }
+.badge-not_found { background: #e6eaf5; color: #3d4b73; }
+.badge-unavailable { background: #fde4e1; color: #912018; }
+.badge-rate_limited { background: #fff0cc; color: #8a5a00; }
+.badge-blocked { background: #f3d9f5; color: #6b1f73; }
+.tabs { display: none; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.tabs button { background: #e4e9f5; border: 0; padding: 9px 14px; border-radius: 8px; cursor: pointer; font-size: .92rem; }
+.tabs button[aria-selected=true] { background: var(--primary); color: #fff; }
+.js-tabs .tabs { display: flex; }
+.js-tabs .panel { display: none; }
+.js-tabs .panel.active { display: block; }
+.raw summary { cursor: pointer; color: var(--muted); margin-top: 12px; }
+.raw pre { background: #101828; color: #e5e9f2; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: .8rem; }
+@media (max-width: 600px) { h1 { font-size: 1.35rem; } th, td { padding: 6px; } }

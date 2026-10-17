@@ -1,0 +1,21 @@
+﻿{% macro badge(status) %}
+<span class="badge badge-{{ status|badge_class }}">{{ status|status_label }}</span>
+{% endmacro %}
+
+{% macro source_line(res) %}
+<p class="source">
+  Source: {{ res.source }}
+  {% if res.source_url %}
+    &middot; <a href="{{ res.source_url }}" target="_blank" rel="noopener noreferrer">{{ res.source_url }}</a>
+  {% endif %}
+  &middot; Retrieved: {{ res.retrieved_at }}
+</p>
+{% if res.message %}<p class="msg">{{ res.message }}</p>{% endif %}
+{% endmacro %}
+
+{% macro raw(res) %}
+<details class="raw">
+  <summary>Raw technical details (optional)</summary>
+  <pre>{{ res|tojson(indent=2) }}</pre>
+</details>
+{% endmacro %}

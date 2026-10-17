@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card hero">
+  <h1>Investigate a public domain</h1>
+  <p class="muted">Enter one domain name, for example <code>example.com</code>. Do not include
+    <code>https://</code>, paths or ports.</p>
+  <form method="post" action="{{ url_for('main.investigate') }}" data-investigate-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="domain">Domain name</label>
+    <div class="form-row">
+      <input id="domain" name="domain" type="text" value="{{ domain_value }}"
+             placeholder="example.com" maxlength="253" required
+             autocomplete="off" spellcheck="false" autocapitalize="none">
+      <button type="submit" class="btn">Investigate</button>
+    </div>
+    {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  </form>
+</section>
+
+<section class="card">
+  <h2>Recent investigations</h2>
+  {% if recent %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Domain</th><th>Date</th><th>Result</th></tr></thead>
+      <tbody>
+      {% for item in recent %}
+        <tr>
+          <td>{{ item.domain }}</td>
+          <td>{{ item.created_at }}</td>
+          <td><a href="{{ url_for('main.show_investigation', inv_id=item.id) }}">View #{{ item.id }}</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <form method="post" action="{{ url_for('main.clear_history') }}" class="clear-form" data-confirm-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label class="check">
+      <input type="checkbox" name="confirm" value="yes" required>
+      I understand this permanently deletes all local history and saved PDF reports.
+    </label>
+    <button type="submit" class="btn btn-danger">Clear history</button>
+  </form>
+  {% else %}
+  <p class="muted">No investigations yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
