@@ -122,27 +122,3 @@ relationship is NOT proof of common ownership, identity or intent.
 ## Possible future improvements
 IP pinning for outbound requests, a per-user rate limiter, CSV/JSON export, caching of results,
 automated tests (pytest), and a comparison view between two investigations of the same domain.
-
-## Viva demonstration script (about 5 minutes)
-1. Show the project tree and say: "Collectors gather data, routes orchestrate, SQLite stores history, ReportLab builds the PDF."
-2. Try `http://example.com/path` - the validation error appears. Try `localhost` - rejected.
-3. Investigate `example.com`. Walk through the summary cards.
-4. DNS tab: point out "No records found" versus "Lookup failed", with query times.
-5. RDAP tab: dates and status; mention privacy redaction and that registrant data is not collected.
-6. Certificates tab: explain it is issuance history, not proof of ownership.
-7. Website tab: status, final URL, title, safe header allow-list; mention the "not a security scan" notice.
-8. Download the PDF and show the sources and limitations pages.
-9. Show Recent investigations and demonstrate the confirmed "Clear history".
-
-## Suggested viva questions
-1. **Why validate the domain?** To reject URLs, paths, credentials, IPs and internal names before any request is made.
-2. **What is SSRF and how is it prevented?** Tricking a server into requesting internal resources. We resolve the host, require every address to be public, restrict ports and schemes, and re-check every redirect.
-3. **Why handle redirects manually?** So each hop can be re-validated; automatic redirects could lead to a private address.
-4. **What is RDAP?** The modern, JSON-based successor to WHOIS for registration data.
-5. **What is Certificate Transparency?** Public logs of issued TLS certificates; crt.sh makes them searchable.
-6. **Why is a shared IP not proof of common ownership?** Many unrelated sites share hosting, CDNs and name servers.
-7. **How are SQL injection and XSS prevented?** Parameterised SQL (`?` placeholders) and Jinja2 auto-escaping (plus a strict Content-Security-Policy).
-8. **What is the CSRF token for?** It stops other websites from submitting our POST forms (e.g. "clear history") from the user's browser.
-9. **Why timeouts and size limits?** To stop slow or huge responses from hanging or exhausting the app.
-10. **Is this a vulnerability scanner?** No. It collects basic public records and never tests for weaknesses.
-11. **What is a known weakness of your design?** DNS rebinding - validation is not pinned to the connection.
